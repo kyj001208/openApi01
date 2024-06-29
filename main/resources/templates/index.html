@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="/js/convert_dfs_xy.js"></script>
+
+<script>
+	
+	var latitude;
+	var	longitude;
+
+		
+	
+	function getLocation() {
+	  if (navigator.geolocation) {
+	    navigator.geolocation.getCurrentPosition(showPosition);
+	  } else {
+	    x.innerHTML = "Geolocation is not supported by this browser.";
+	  }
+	}
+	
+	function showPosition(position) {
+		latitude=position.coords.latitude;
+		longitude=position.coords.longitude;
+		
+		
+		$.ajax({
+				url:"/myweather",
+				data:dfs_xy_conv('toXY', latitude, longitude),
+				success:function(result){
+					console.log(typeof result);
+					console.log(result);
+					
+					var str;
+					result.forEach((item,index)=>{
+						str +=`
+								<dl>
+									<dt>${item.category=='REH'?'습도':'온도'}</dt>
+									<dd>
+										
+										<span>${item.obsrValue}</span>
+										<i>	${item.category=='REH'?'%':'℃'}</i>
+										
+										</dd>
+								</dl>
+							
+						`;
+						
+					});
+					
+					$("#weather").html(str);
+					
+					
+				}
+				
+			});
+		
+	}
+
+	
+	getLocation();
+	
+
+
+
+</script>
+
+</head>
+<body>
+		
+	<div id="weather"> </div>
+	
+	<a href="/myweather">날씨페이지로 이동</a>
+	<h1>인덱스 페이지</h1>
+	
+
+</body>
+</html>
